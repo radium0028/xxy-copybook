@@ -45,4 +45,7 @@ nbdist/
 !*/build/*.java
 !*/build/*.html
 !*/build/*.xml
+
 /src/main/resources/fonts/
+.DS_Store
+._*
