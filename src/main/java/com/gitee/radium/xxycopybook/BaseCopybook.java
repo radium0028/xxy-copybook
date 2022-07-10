@@ -327,6 +327,8 @@ public class BaseCopybook extends AbstractCopybookBuilder {
         //记录在当前页面上的函数索引，在每次新建页面时会被设置为0
         AtomicInteger pageRowIndex = new AtomicInteger();
 
+        //TODO 这里可以考虑来个自动居中
+
         //正文区域的坐标系，页面的上边距 + 页面头部尺寸 + 页面头部边距
         int pageStartX = this.templateBean.getPagePaddingLeft();
         int pageStartY = this.templateBean.getPagePaddingTop() +

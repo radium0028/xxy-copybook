@@ -77,7 +77,7 @@ public class AppTest
         Font font = new Font(fontName, Font.PLAIN, 140);
         copybookTemplateBuilder.font(font);
         //设置模板数据
-        CopybookTemplate copybookTemplate = copybookTemplateBuilder.build();
+        CopybookTemplate copybookTemplate = copybookTemplateBuilder.pagePadding(new Integer[]{10,10,10,200}).build();
         CopybookData copybookData = CopybookData.builder()
                 .author("Radium")
                 .wordList(CollUtil.toList(text.split("")))
@@ -126,7 +126,7 @@ public class AppTest
         //设置字体
         copybookTemplateBuilder.font(new Font(fontName, Font.PLAIN, 140));
         //设置模板数据
-        CopybookTemplate copybookTemplate = copybookTemplateBuilder.build();
+        CopybookTemplate copybookTemplate = copybookTemplateBuilder.pagePadding(new Integer[]{10,10,10,200}).build();
         CopybookData copybookData = CopybookData.builder()
                 .author("Radium")
                 .wordList(CollUtil.toList(text.split(",")))
@@ -181,7 +181,7 @@ public class AppTest
         Font font = new Font(fontName, Font.PLAIN, 140);
         copybookTemplateBuilder.font(font);
         //设置模板数据
-        CopybookTemplate copybookTemplate = copybookTemplateBuilder.build();
+        CopybookTemplate copybookTemplate = copybookTemplateBuilder.pagePadding(new Integer[]{10,10,10,200}).build();
         CopybookData copybookData = CopybookData.builder()
                 .author("Radium")
                 .wordList(CollUtil.toList(text.split("")))
@@ -244,7 +244,7 @@ public class AppTest
         //设置字体
         copybookTemplateBuilder.font(new Font(fontName, Font.PLAIN, 140));
         //设置模板数据
-        CopybookTemplate copybookTemplate = copybookTemplateBuilder.build();
+        CopybookTemplate copybookTemplate = copybookTemplateBuilder.pagePadding(new Integer[]{10,10,10,200}).build();
         CopybookData copybookData = CopybookData.builder()
                 .author("Radium")
                 .wordList(CollUtil.toList(text.split(",")))
