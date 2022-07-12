@@ -30,6 +30,15 @@
 
   
 #### 使用说明
+Maven仓库坐标：
+```xml
+<dependency>
+  <groupId>io.github.radium0028</groupId>
+  <artifactId>xxy-copybook</artifactId>
+  <version>1.0-Release</version>
+</dependency>
+```
+
 **大家可以将自己喜欢的字体放到resources/fonts文件夹内，因为版权问题，我这里不能提供字体了，大家自己收集吧。**
 \
 希望尽快使用起来的小伙伴可以看一下这两个类：
