@@ -32,4 +32,14 @@ public abstract class AbstractCell {
      * @return
      */
     public abstract BufferedImage draw();
+
+    @Override
+    public String toString() {
+        return "AbstractCell{" +
+                "width=" + width +
+                ", height=" + height +
+                ", color=" + color +
+                ", basicStroke=" + basicStroke +
+                '}';
+    }
 }

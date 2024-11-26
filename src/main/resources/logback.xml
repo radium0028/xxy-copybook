@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true" scanPeriod="60 seconds" debug="false">
+    <!--
+       http://logback.qos.ch/manual/layouts.html
+       %p:输出优先级，即DEBUG,INFO,WARN,ERROR,FATAL
+       %r:输出自应用启动到输出该日志讯息所耗费的毫秒数
+       %t:输出产生该日志事件的线程名
+       %f:输出日志讯息所属的类别的类别名
+       %c:输出日志讯息所属的类的全名
+       %d:输出日志时间点的日期或时间，指定格式的方式： %d{yyyy-MM-dd HH:mm:ss}
+       %l:输出日志事件的发生位置，即输出日志讯息的语句在他所在类别的第几行。
+       %m:输出代码中指定的讯息，如log(message)中的message
+       %n:输出一个换行符号
+   -->
+    <contextName>logback</contextName>
+    <appender name="stdout" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %highlight(%-5level) %cyan(%logger{5}).%M\(%F:%L\) %msg %n
+            </pattern>
+        </encoder>
+    </appender>
+    <!--按体积生成日志，避免服务器磁盘撑死-->
+    <appender name="logFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <!-- rollover daily -->
+            <fileNamePattern>.logs/app.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <!-- each file should be at most 200MB, keep 3 days worth of history, but at most 1GB -->
+            <maxFileSize>200MB</maxFileSize>
+            <maxHistory>3</maxHistory>
+            <totalSizeCap>1GB</totalSizeCap>
+        </rollingPolicy>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %highlight(%-5level) %msg %cyan(%logger{5}).%M\(%F:%L\)%n
+            </pattern>
+        </encoder>
+    </appender>
+
+    <logger name="org.springframework" level="INFO"/>
+    <logger name="org.apache" level="INFO"/>
+    <logger name="com.netflix" level="INFO"/>
+    <logger name="io.lettuce" level="INFO"/>
+
+    <root level="DEBUG">
+        <appender-ref ref="stdout"/>
+        <appender-ref ref="logFile"/>
+    </root>
+</configuration>

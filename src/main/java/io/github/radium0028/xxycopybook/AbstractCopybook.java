@@ -2,12 +2,15 @@ package io.github.radium0028.xxycopybook;
 
 import io.github.radium0028.xxycopybook.cell.AbstractCell;
 import io.github.radium0028.xxycopybook.material.CopybookData;
-import io.github.radium0028.xxycopybook.material.CopybookTemplate;
+import io.github.radium0028.xxycopybook.material.CopybookStyle;
 
 import java.awt.image.BufferedImage;
 import java.util.List;
 
-public abstract class AbstractCopybookBuilder {
+/**
+ * 字帖的抽象类，定义了字帖的基本构成和公共方法
+ */
+public abstract class AbstractCopybook {
     /**
      * 要生成的字帖
      */
@@ -15,15 +18,15 @@ public abstract class AbstractCopybookBuilder {
     /**
      * 模板信息
      */
-    CopybookTemplate templateBean;
+    CopybookStyle copybookStyle;
     /**
      * 字帖数据内容
      */
     CopybookData copybookData;
 
-    public AbstractCopybookBuilder(CopybookTemplate copybookTemplate, CopybookData copybookData) {
-        this.templateBean = copybookTemplate;
-        this.copybookData = copybookData;
+    public AbstractCopybook(CopybookStyle copybookStyleTemplate, CopybookData copybookDataTemplate) {
+        this.copybookStyle = copybookStyleTemplate;
+        this.copybookData = copybookDataTemplate;
     }
 
     /**

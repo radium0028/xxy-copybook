@@ -7,12 +7,14 @@ import cn.hutool.core.util.ReflectUtil;
 import io.github.radium0028.xxycopybook.cell.AbstractCell;
 import io.github.radium0028.xxycopybook.cell.ConretetCell;
 import io.github.radium0028.xxycopybook.material.CopybookData;
-import io.github.radium0028.xxycopybook.material.CopybookTemplate;
+import io.github.radium0028.xxycopybook.material.CopybookStyle;
 import io.github.radium0028.xxycopybook.text.CellPinyin;
 import io.github.radium0028.xxycopybook.text.CellPinyinCopy;
 import io.github.radium0028.xxycopybook.text.CellText;
 import io.github.radium0028.xxycopybook.text.CellTextCopy;
 import io.github.radium0028.xxycopybook.utils.ImageUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -28,14 +30,16 @@ import java.util.concurrent.atomic.AtomicReference;
  *
  * @author radium
  */
-public class BaseCopybook extends AbstractCopybookBuilder {
-    int textCellWidth = this.templateBean.getTextCellWidth();
-    int textCellHeight = this.templateBean.getTextCellHeight();
-    int pinyinCellWidth = this.templateBean.getPinyinCellWidth();
-    int pinyinCellHeight = this.templateBean.getPinyinCellHeight();
+public class BaseCopybook extends AbstractCopybook {
+    private static final Logger logger = LoggerFactory.getLogger(BaseCopybook.class);
 
-    public BaseCopybook(CopybookTemplate copybookTemplate, CopybookData copybookData) {
-        super(copybookTemplate, copybookData);
+    int textCellWidth = this.copybookStyle.getTextCellWidth();
+    int textCellHeight = this.copybookStyle.getTextCellHeight();
+    int pinyinCellWidth = this.copybookStyle.getPinyinCellWidth();
+    int pinyinCellHeight = this.copybookStyle.getPinyinCellHeight();
+
+    public BaseCopybook(CopybookStyle copybookStyle, CopybookData copybookData) {
+        super(copybookStyle, copybookData);
     }
 
     /**
@@ -44,31 +48,47 @@ public class BaseCopybook extends AbstractCopybookBuilder {
     @Override
     public BufferedImage createBasic() {
         //一个白色的底图
-        return ImageUtil.createImage(this.templateBean.getWidth(), this.templateBean.getHeight(), Color.WHITE);
+
+        int imgWidth = this.copybookStyle.getWidth();
+        int imgHeight = this.copybookStyle.getHeight();
+        logger.debug("default background image:一个白色的底图,imgWidth=" + imgWidth +",imgHeight=" + imgHeight);
+        BufferedImage basicImage = ImageUtil.createImage(imgWidth, imgHeight, Color.WHITE);
+
+        return basicImage;
     }
 
     @Override
     public AbstractCell createTextCell() {
-        AbstractCell abstractCell = new ConretetCell(this.templateBean.getTextCellWidth(),
-                templateBean.getTextCellHeight());
+
+        logger.info("Creating text cell with decorate styles");
+        AbstractCell abstractCell = new ConretetCell(this.copybookStyle.getTextCellWidth(),
+                copybookStyle.getTextCellHeight());
+        logger.debug("AbstractCell:{}", abstractCell);
 
         AtomicReference<AbstractCell> atomCell = new AtomicReference<>(abstractCell);
-        this.templateBean.getTextCellLineStyle().forEach(lineStyle -> {
+        this.copybookStyle.getTextCellLineStyle().forEach(lineStyle -> {
             try {
                 //应用各类装饰器
                 Class clz = Class.forName(lineStyle.getValue());
                 //线条颜色
                 Map<String, Color> stringColorMap =
-                        Optional.ofNullable(this.templateBean.getTextLineColorMap()).orElse(new HashMap<>());
+                        Optional.ofNullable(this.copybookStyle.getTextLineColorMap()).orElse(new HashMap<>());
                 Color color = stringColorMap.get(lineStyle.getValue());
-                color = Optional.ofNullable(color).orElse(this.templateBean.getTextLineColor());
+                color = Optional.ofNullable(color).orElse(this.copybookStyle.getTextLineColor());
+                logger.debug("线条颜色:{}", color);
+
                 //线条样式
                 Map<String, BasicStroke> lineStrokeMap =
-                        Optional.ofNullable(this.templateBean.getTextLineStrokeMap()).orElse(new HashMap<>());
+                        Optional.ofNullable(this.copybookStyle.getTextLineStrokeMap()).orElse(new HashMap<>());
                 BasicStroke stroke = lineStrokeMap.get(lineStyle.getValue());
-                stroke = Optional.ofNullable(stroke).orElse(this.templateBean.getTextLineStroke());
+                stroke = Optional.ofNullable(stroke).orElse(this.copybookStyle.getTextLineStroke());
+                logger.debug("线条样式:{}", stroke);
+
                 //创建装饰器
-                atomCell.set((AbstractCell) ReflectUtil.newInstance(clz, atomCell.get(), color, stroke));
+
+                AbstractCell abstractCell2 = (AbstractCell) ReflectUtil.newInstance(clz, atomCell.get(), color, stroke);
+                logger.debug("AbstractCell2:{}", abstractCell2);
+                atomCell.set(abstractCell2);
             } catch (ClassNotFoundException e) {
                 e.printStackTrace();
             }
@@ -79,24 +99,24 @@ public class BaseCopybook extends AbstractCopybookBuilder {
 
     @Override
     public AbstractCell createPinyinCell() {
-        if (this.templateBean.isShowPinyin()) {
-            AbstractCell abstractCell = new ConretetCell(this.templateBean.getPinyinCellWidth(),
-                    templateBean.getPinyinCellHeight());
+        if (this.copybookStyle.isShowPinyin()) {
+            AbstractCell abstractCell = new ConretetCell(this.copybookStyle.getPinyinCellWidth(),
+                    copybookStyle.getPinyinCellHeight());
             AtomicReference<AbstractCell> atomCell = new AtomicReference<>(abstractCell);
-            this.templateBean.getPinyinCellLineStyle().forEach(lineStyle -> {
+            this.copybookStyle.getPinyinCellLineStyle().forEach(lineStyle -> {
                 try {
                     //应用各类装饰器
                     Class clz = Class.forName(lineStyle.getValue());
                     //线条颜色
                     Map<String, Color> pinyinLineColorMap =
-                            Optional.ofNullable(this.templateBean.getPinyinLineColorMap()).orElse(new HashMap<>());
+                            Optional.ofNullable(this.copybookStyle.getPinyinLineColorMap()).orElse(new HashMap<>());
                     Color color = pinyinLineColorMap.get(lineStyle.getValue());
-                    color = Optional.ofNullable(color).orElse(this.templateBean.getPinyinLineColor());
+                    color = Optional.ofNullable(color).orElse(this.copybookStyle.getPinyinLineColor());
                     //线条样式
                     Map<String, BasicStroke> pinyinLineStrokeMap =
-                            Optional.ofNullable(this.templateBean.getPinyinLineStrokeMap()).orElse(new HashMap<>());
+                            Optional.ofNullable(this.copybookStyle.getPinyinLineStrokeMap()).orElse(new HashMap<>());
                     BasicStroke stroke = pinyinLineStrokeMap.get(lineStyle.getValue());
-                    stroke = Optional.ofNullable(stroke).orElse(this.templateBean.getPinyinLineStroke());
+                    stroke = Optional.ofNullable(stroke).orElse(this.copybookStyle.getPinyinLineStroke());
 
                     //创建装饰器
                     atomCell.set((AbstractCell) ReflectUtil.newInstance(clz, atomCell.get(), color, stroke));
@@ -112,15 +132,22 @@ public class BaseCopybook extends AbstractCopybookBuilder {
     @Override
     public List<RowData> createRow(AbstractCell textAbstractCell, AbstractCell pinyinAbstractCell) throws Exception {
         //每行有多少个字
-        int rowTextNum = this.templateBean.getRowCellNum();
+        int rowTextNum = this.copybookStyle.getRowCellNum();
+        logger.debug("每行有多少个字?" + rowTextNum);
+
         //一共有多少个字
         int textNum = this.copybookData.getWordList().size();
+        logger.debug("一共有多少个字" + textNum);
         //完整的文字每行几个字
-        int fullWordNum = this.templateBean.getFullWordNum();
+        int fullWordNum = this.copybookStyle.getFullWordNum();
+        logger.debug("完整的文字每行几个字" + fullWordNum);
         //描红每行几个字
-        int copyWordNum = this.templateBean.getCopyWordNum();
+        int copyWordNum = this.copybookStyle.getCopyWordNum();
+        logger.debug("描红每行几个字" + copyWordNum);
+
         //每行空白的个需要几个
-        int emptyCellNum = this.templateBean.getEmptyCellNum();
+        int emptyCellNum = this.copybookStyle.getEmptyCellNum();
+        logger.debug("每行空白的个需要几个" + emptyCellNum);
 
         if (fullWordNum + copyWordNum + emptyCellNum > rowTextNum) {
             throw new Exception("每行文字的数量小于完整+描红+空白的数量");
@@ -139,17 +166,17 @@ public class BaseCopybook extends AbstractCopybookBuilder {
                     break;
                 }
                 String word = this.copybookData.getWordList().get(wordIndex);
-//                log.debug("准备画文字：{}", word);
+                logger.debug("准备画文字：{}", word);
                 //开始画一行的文字
                 for (int j = 0; j < fullWordNum; j++) {
-//                    log.debug("画'{}'的完整文字：", word);
+                    logger.debug("画'{}'的完整文字：", word);
                     //完整文字
-                    CellText cellText = new CellText(textAbstractCell, this.templateBean.getFont(),
-                            this.templateBean.getTextColor());
+                    CellText cellText = new CellText(textAbstractCell, this.copybookStyle.getFont(),
+                            this.copybookStyle.getTextColor());
                     cellText.setText(word);
-                    if (this.templateBean.isShowPinyin()) {
-                        CellPinyin pinyinCell1 = new CellPinyin(pinyinAbstractCell, this.templateBean.getPinyinFont()
-                                , this.templateBean.getPinyinColor());
+                    if (this.copybookStyle.isShowPinyin()) {
+                        CellPinyin pinyinCell1 = new CellPinyin(pinyinAbstractCell, this.copybookStyle.getPinyinFont()
+                                , this.copybookStyle.getPinyinColor());
                         pinyinCell1.setText(this.copybookData.getPinyinList().get(wordIndex));
                         rowData.push(cellText, pinyinCell1);
                     } else {
@@ -158,15 +185,18 @@ public class BaseCopybook extends AbstractCopybookBuilder {
                 }
 
                 for (int x = 0; x < copyWordNum; x++) {
-//                    log.debug("画'{}'的描红文字：", word);
+                    if(x==0){
+                        logger.debug("画'{}'的描红文字：", word);
+                    }
+
                     //描红文字
-                    CellTextCopy textCell1 = new CellTextCopy(textAbstractCell, this.templateBean.getFont(),
-                            this.templateBean.getTextColor());
+                    CellTextCopy textCell1 = new CellTextCopy(textAbstractCell, this.copybookStyle.getFont(),
+                            this.copybookStyle.getTextColor());
                     textCell1.setText(word);
-                    if (this.templateBean.isShowPinyin()) {
+                    if (this.copybookStyle.isShowPinyin()) {
                         CellPinyinCopy pinyinCell1 = new CellPinyinCopy(pinyinAbstractCell,
-                                this.templateBean.getPinyinFont()
-                                , this.templateBean.getPinyinColor());
+                                this.copybookStyle.getPinyinFont()
+                                , this.copybookStyle.getPinyinColor());
                         pinyinCell1.setText(this.copybookData.getPinyinList().get(wordIndex));
                         rowData.push(textCell1, pinyinCell1);
                     } else {
@@ -177,7 +207,7 @@ public class BaseCopybook extends AbstractCopybookBuilder {
                 for (int y = 0; y < emptyCellNum; y++) {
 //                    log.debug("画'{}'的空白格：", word);
                     //空白个
-                    if (this.templateBean.isShowPinyin()) {
+                    if (this.copybookStyle.isShowPinyin()) {
                         rowData.push(textAbstractCell, pinyinAbstractCell);
                     } else {
                         rowData.push(textAbstractCell);
@@ -197,16 +227,16 @@ public class BaseCopybook extends AbstractCopybookBuilder {
         List<BufferedImage> resultImage = CollUtil.newArrayList();
         //计算行的高度，
         int columnHeight =
-                this.templateBean.getTextCellHeight() + this.templateBean.getCellMarginTop() + this.templateBean.getCellMarginBottom();
-        if (this.templateBean.isShowPinyin()) {
+                this.copybookStyle.getTextCellHeight() + this.copybookStyle.getCellMarginTop() + this.copybookStyle.getCellMarginBottom();
+        if (this.copybookStyle.isShowPinyin()) {
             //如果有拼音格，再加上拼音格的高度
-            columnHeight = columnHeight + this.templateBean.getPinyinCellHeight();
+            columnHeight = columnHeight + this.copybookStyle.getPinyinCellHeight();
         }
         //计算行的宽度
         //在这里根据列宽计算出整个图像的尺寸。(列宽+间距)*列数量
         int columnWidth =
-                this.templateBean.getTextCellWidth() + this.templateBean.getCellMarginLeft() + this.templateBean.getCellMarginRight();
-        columnWidth = columnWidth * this.templateBean.getRowCellNum();
+                this.copybookStyle.getTextCellWidth() + this.copybookStyle.getCellMarginLeft() + this.copybookStyle.getCellMarginRight();
+        columnWidth = columnWidth * this.copybookStyle.getRowCellNum();
 
         //先画一个行的底图，依然是透明底的。
         BufferedImage finalRowImage = ImageUtil.createImage(columnWidth, columnHeight);
@@ -224,8 +254,8 @@ public class BaseCopybook extends AbstractCopybookBuilder {
                     if (text == null) {
                         continue;
                     }
-                    int offsetPinyinX = this.pinyinCellWidth + this.templateBean.getCellMarginLeft();
-                    int offsetTextX = this.textCellWidth + this.templateBean.getCellMarginLeft();
+                    int offsetPinyinX = this.pinyinCellWidth + this.copybookStyle.getCellMarginLeft();
+                    int offsetTextX = this.textCellWidth + this.copybookStyle.getCellMarginLeft();
 
 ////                    这里的代码还不完整，先不启用
 //                    if(this.templateBean.getCellMarginLeft()==0){
@@ -237,18 +267,18 @@ public class BaseCopybook extends AbstractCopybookBuilder {
 //                        }
 //                    }
 
-                    if (this.templateBean.isShowPinyin() && abstractCells.length >= 2) {
+                    if (this.copybookStyle.isShowPinyin() && abstractCells.length >= 2) {
                         //有拼音格，先画拼音，再画文字
                         if (abstractCells[1] != null) {
                             g.drawImage(abstractCells[1].draw(),
                                     offsetPinyinX * i,
-                                    this.templateBean.getCellMarginTop(), null);
+                                    this.copybookStyle.getCellMarginTop(), null);
                         }
                         g.drawImage(text.draw(), offsetTextX * i,
-                                this.pinyinCellHeight + this.templateBean.getCellMarginTop(), null);
+                                this.pinyinCellHeight + this.copybookStyle.getCellMarginTop(), null);
                     } else if (abstractCells.length >= 1) {
                         g.drawImage(text.draw(), offsetTextX * i,
-                                this.templateBean.getCellMarginTop(), null);
+                                this.copybookStyle.getCellMarginTop(), null);
                     }
                 }
             }
@@ -260,22 +290,22 @@ public class BaseCopybook extends AbstractCopybookBuilder {
 
     @Override
     public BufferedImage createHeader() {
-        if (this.templateBean.getHeaderHeight() > 0) {
-            AbstractCell abstractCell = new ConretetCell(this.templateBean.getBackgroundColor(),
-                    this.templateBean.getWidth(),
-                    this.templateBean.getHeaderHeight());
-            CellText textCell = new CellText(abstractCell, this.templateBean.getFont(),
-                    this.templateBean.getTextColor());
+        if (this.copybookStyle.getHeaderHeight() > 0) {
+            AbstractCell abstractCell = new ConretetCell(this.copybookStyle.getBackgroundColor(),
+                    this.copybookStyle.getWidth(),
+                    this.copybookStyle.getHeaderHeight());
+            CellText textCell = new CellText(abstractCell, this.copybookStyle.getFont(),
+                    this.copybookStyle.getTextColor());
             String xstr = Optional.ofNullable(this.copybookData.getTitle()).orElse("X字帖自动生成");
             textCell.setText(xstr);
             BufferedImage image = textCell.draw();
             //给image右下角添加文字
             Graphics2D g = image.createGraphics();
             g.setColor(Color.BLACK);
-            Font font = new Font(this.templateBean.getFont().getName(), Font.BOLD, 50);
+            Font font = new Font(this.copybookStyle.getFont().getName(), Font.BOLD, 50);
             g.setFont(font);
-            g.drawString(this.copybookData.getSubtitle(), this.templateBean.getWidth() - 700,
-                    this.templateBean.getHeaderHeight() - 50);
+            g.drawString(this.copybookData.getSubtitle(), this.copybookStyle.getWidth() - 700,
+                    this.copybookStyle.getHeaderHeight() - 50);
             g.dispose();
             return image;
         } else {
@@ -285,19 +315,19 @@ public class BaseCopybook extends AbstractCopybookBuilder {
 
     @Override
     public BufferedImage createFooter() {
-        if (this.templateBean.getFooterHeight() > 0) {
-            BufferedImage bufferedImage = ImageUtil.createImage(this.templateBean.getWidth(),
-                    this.templateBean.getFooterHeight(), this.templateBean.getBackgroundColor());
+        if (this.copybookStyle.getFooterHeight() > 0) {
+            BufferedImage bufferedImage = ImageUtil.createImage(this.copybookStyle.getWidth(),
+                    this.copybookStyle.getFooterHeight(), this.copybookStyle.getBackgroundColor());
             //给image右下角添加文字
             Graphics2D graphics = bufferedImage.createGraphics();
             graphics.setColor(Color.BLACK);
-            Font font = new Font(this.templateBean.getFont().getName(), Font.PLAIN, 50);
+            Font font = new Font(this.copybookStyle.getFont().getName(), Font.PLAIN, 50);
             graphics.setFont(font);
             graphics.drawString((this.copybookData.getCopyright() != null ? this.copybookData.getCopyright() : "")
                             + (this.copybookData.getAuthor() != null ? this.copybookData.getAuthor() : "") + " "
                             + DateUtil.today(),
-                    this.templateBean.getWidth() - 500,
-                    this.templateBean.getHeaderHeight() - 50);
+                    this.copybookStyle.getWidth() - 500,
+                    this.copybookStyle.getHeaderHeight() - 50);
             graphics.dispose();
             return bufferedImage;
         } else {
@@ -330,20 +360,20 @@ public class BaseCopybook extends AbstractCopybookBuilder {
         //TODO 这里可以考虑来个自动居中
 
         //正文区域的坐标系，页面的上边距 + 页面头部尺寸 + 页面头部边距
-        int pageStartX = this.templateBean.getPagePaddingLeft();
-        int pageStartY = this.templateBean.getPagePaddingTop() +
-                this.templateBean.getHeaderHeight() +
-                this.templateBean.getHeaderMarginBottom();
+        int pageStartX = this.copybookStyle.getPagePaddingLeft();
+        int pageStartY = this.copybookStyle.getPagePaddingTop() +
+                this.copybookStyle.getHeaderHeight() +
+                this.copybookStyle.getHeaderMarginBottom();
 
-        int pageEndX = this.templateBean.getPagePaddingRight();
+        int pageEndX = this.copybookStyle.getPagePaddingRight();
         int pageEndY = basicImageHeight -
-                this.templateBean.getPagePaddingBottom() -
-                this.templateBean.getFooterHeight() -
-                this.templateBean.getFooterMarginTop();
+                this.copybookStyle.getPagePaddingBottom() -
+                this.copybookStyle.getFooterHeight() -
+                this.copybookStyle.getFooterMarginTop();
 
         //计算一下每个页面可以放几行
         int pageRowCount =
-                (pageEndY - pageStartY) / this.templateBean.getTextCellHeight() + this.templateBean.getCellMarginTop();
+                (pageEndY - pageStartY) / this.copybookStyle.getTextCellHeight() + this.copybookStyle.getCellMarginTop();
 
         CollUtil.forEach(rowsList, (row, index) -> {
             BufferedImage pageImageCom = pageImage.get();

@@ -8,17 +8,19 @@ import lombok.Builder;
 import lombok.Data;
 
 import java.awt.*;
+import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 /**
- * 这里是字帖的模板信息，用来定义模板的尺寸，位置，颜色等信息。
+ * 这里是字帖的样式信息，用来定义字帖样式模板的尺寸，位置，颜色等信息。
  *
  * @author radium
  */
 @Data
 @Builder
-public class CopybookTemplate {
+public class CopybookStyle {
     //region 一些基本设置
     /**
      * 边框线默认样式
@@ -179,17 +181,17 @@ public class CopybookTemplate {
      * 边框线的默认颜色
      */
     @Builder.Default
-    private Color borderColor = Color.BLACK;
+    private Color borderColor = Color.RED;
     /**
      * 文字格线段的颜色
      */
     @Builder.Default
-    private Color textLineColor = Color.BLACK;
+    private Color textLineColor = Color.RED;
     /**
      * 临摹格线段的颜色
      */
     @Builder.Default
-    private Color copyLineColor = Color.BLACK;
+    private Color copyLineColor = Color.RED;
     //endregion
 
     //region 线段颜色的设置
@@ -197,7 +199,7 @@ public class CopybookTemplate {
      * 拼音格线段的颜色
      */
     @Builder.Default
-    private Color pinyinLineColor = Color.BLACK;
+    private Color pinyinLineColor = Color.RED;
     /**
      * 文字表格线样式，配合textCellLineStyle使用。
      * 配合textCellLineStyle使用，这里的key是textCellLineStyle的value
@@ -279,5 +281,64 @@ public class CopybookTemplate {
             return cellMargin[3];
         }
         return null;
+    }
+
+    @Override
+    public String toString() {
+
+        Iterator<LineStyle> iterator = textCellLineStyle.iterator();
+        StringBuilder textCellLineStyleStrBuffer = new StringBuilder();
+        while (iterator.hasNext()) {
+            LineStyle lineStyle = iterator.next();
+            textCellLineStyleStrBuffer.append(lineStyle.toString()).append(";");
+        }
+
+        Iterator<LineStyle> pinyinIterator = pinyinCellLineStyle.iterator();
+        StringBuilder pinyinLineStyleStrBuffer = new StringBuilder();
+        while (pinyinIterator.hasNext()) {
+            LineStyle lineStyle = pinyinIterator.next();
+            pinyinLineStyleStrBuffer.append(lineStyle.toString()).append(";");
+        }
+
+        return "CopybookTemplate{" +
+                "边框线默认样式：borderStroke=" + borderStroke +
+                ", 文字格默认样式：textLineStroke=" + textLineStroke +
+                ", 拼音格默认样式：pinyinLineStroke=" + pinyinLineStroke +
+                ", 文字表格线样式集合：textCellLineStyle=" + textCellLineStyleStrBuffer.toString() +
+                ", 拼音表格线样式：pinyinCellLineStyle=" + pinyinLineStyleStrBuffer.toString() +
+                ", backgroundFile='" + backgroundFile + '\'' +
+                ", backgroundColor=" + backgroundColor +
+                ", width=" + width +
+                ", height=" + height +
+                ", headerHeight=" + headerHeight +
+                ", footerHeight=" + footerHeight +
+                ", headerMarginBottom=" + headerMarginBottom +
+                ", footerMarginTop=" + footerMarginTop +
+                ", pagePadding=" + Arrays.toString(pagePadding) +
+                ", cellMargin=" + Arrays.toString(cellMargin) +
+                ", 每行格子的数量？rowCellNum=" + rowCellNum +
+                ", 每页有多少行？rowNum=" + rowNum +
+                ", 完整的文字显示fullWordNum个=" + fullWordNum +
+                ", 临摹的文字显示几个？copyWordNum=" + copyWordNum +
+                ", 空格显示几个？emptyCellNum=" + emptyCellNum +
+                ", showPinyin=" + showPinyin +
+                ", ====================================font=" + font +
+                ", pinyinFont=" + pinyinFont +
+                ", textColor=" + textColor +
+                ", copyTextColor=" + copyTextColor +
+                ", pinyinColor=" + pinyinColor +
+                ", textCellWidth=" + textCellWidth +
+                ", textCellHeight=" + textCellHeight +
+                ", pinyinCellWidth=" + pinyinCellWidth +
+                ", pinyinCellHeight=" + pinyinCellHeight +
+                ", borderColor=" + borderColor +
+                ", textLineColor=" + textLineColor +
+                ", copyLineColor=" + copyLineColor +
+                ", pinyinLineColor=" + pinyinLineColor +
+                ", textLineStrokeMap=" + textLineStrokeMap +
+                ", pinyinLineStrokeMap=" + pinyinLineStrokeMap +
+                ", textLineColorMap=" + textLineColorMap +
+                ", pinyinLineColorMap=" + pinyinLineColorMap +
+                '}';
     }
 }

@@ -11,6 +11,7 @@ import java.util.Optional;
  * 田字格的装饰器
  */
 public class CellLineTian extends AbstractCellDecorator {
+    
     public CellLineTian(AbstractCell abstractCell) {
         super(abstractCell);
     }

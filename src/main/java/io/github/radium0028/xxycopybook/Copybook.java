@@ -9,6 +9,7 @@ import java.io.File;
 import java.util.List;
 
 /**
+ * CopyBook ，字帖类
  * @author radium
  */
 public class Copybook {

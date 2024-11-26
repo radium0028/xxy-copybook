@@ -48,6 +48,14 @@ public class ImageUtil {
         } else {
             //画一个白色的背景
             graphics.setBackground(color[0]);
+//            try {
+//                BufferedImage img = ImageIO.read(new File("/Users/Think/Documents/dev/xxy-copybook/src/main/resources/00024-2406186233.png"));
+//                if(img != null){
+//                    image = img;
+//                }
+//            } catch (IOException e) {
+//                throw new RuntimeException(e);
+//            }
             //通过使用当前绘图表面的背景色进行填充来清除指定的矩形。
             graphics.clearRect(0, 0, image.getWidth(), image.getHeight());
         }

@@ -45,7 +45,7 @@ public class CellText extends AbstractCellTextDecorator {
         Integer width = Optional.ofNullable(this.width).orElse(abstractCell.getWidth());
         Integer height = Optional.ofNullable(this.height).orElse(abstractCell.getHeight());
 
-        //抗据此
+        //抗锯齿
         graphics2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
         //计算宽度

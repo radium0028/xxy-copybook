@@ -1,0 +1,32 @@
+family=Alibaba Sans,name=Alibaba Sans Italic
+family=FZKai-ZS,name=FZKai-ZS
+family=Alibaba Sans Light,name=Alibaba Sans Light
+family=Source Han Serif SC Medium,name=Source Han Serif SC Medium
+family=Heiti TC,name=Heiti TC Medium
+family=Source Han Serif SC SemiBold,name=Source Han Serif SC SemiBold
+family=Alibaba Sans,name=Alibaba Sans Bold
+family=Hiragino Sans GB W,name=Hiragino Sans GB W
+family=Source Han Serif SC ExtraLight,name=Source Han Serif SC ExtraLight
+family=KaiTi,name=KaiTi
+family=FZHei-BS,name=FZHei-BS
+family=Alibaba Sans,name=Alibaba Sans
+family=Alibaba PuHuiTi Heavy,name=Alibaba PuHuiTi Heavy
+family=Alibaba Sans,name=Alibaba Sans Bold Italic
+family=Alibaba PuHuiTi Light,name=Alibaba PuHuiTi Light
+family=Alibaba PuHuiTi,name=Alibaba PuHuiTi Bold
+family=FZFangSong-ZS,name=FZFangSong-ZS
+family=Alibaba Sans Heavy,name=Alibaba Sans Heavy
+family=Source Han Serif SC,name=Source Han Serif SC Bold
+family=Alibaba Sans Medium,name=Alibaba Sans Medium Italic
+family=Source Han Serif SC,name=Source Han Serif SC
+family=Heiti TC,name=Heiti TC Light
+family=Source Han Serif SC Heavy,name=Source Han Serif SC Heavy
+family=Alibaba Sans Light,name=Alibaba Sans Light Italic
+family=Alibaba Sans Heavy,name=Alibaba Sans Heavy Italic
+family=Alibaba Sans Medium,name=Alibaba Sans Medium
+family=Source Han Serif SC Light,name=Source Han Serif SC Light
+family=FZShuSong-ZS,name=FZShuSong-ZS
+family=Alibaba PuHuiTi,name=Alibaba PuHuiTi
+family=Alibaba PuHuiTi Medium,name=Alibaba PuHuiTi Medium
+family=Alibaba Sans Black,name=Alibaba Sans Black
+family=Songti SC,name=Songti SC Black
